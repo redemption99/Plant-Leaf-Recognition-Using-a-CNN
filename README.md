@@ -1,3 +1,3 @@
 # Plant-Leaf-Recognition-Using-a-Convolution-Neural-Network
 
-Test accuracy 86%
+Test accuracy 89%
