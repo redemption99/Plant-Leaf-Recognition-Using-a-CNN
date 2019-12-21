@@ -48,7 +48,7 @@ def create_model():
     [X, Y] = get_data()
 
     batch_size = 32
-    epochs = 25
+    epochs = 50
 
     #80% dataseta koristimo za treniranje, 20% za testiranje
     X_train, X_test, Y_train, Y_test = train_test_split(X,Y, test_size=0.2)
@@ -71,9 +71,10 @@ def create_model():
     model.add(MaxPooling2D(pool_size=(8, 8), strides=1))
 
     model.add(Flatten())
-    model.add(Dense(512))  # Prvi potpuno povezan sloj
+    model.add(Dense(2048))  # Prvi potpuno povezan sloj
     model.add(Activation('relu'))
-    model.add(Dropout(rate=0.5))
+    model.add(Dense(512))  # Drugi potpuno povezan sloj
+    model.add(Activation('relu'))
     model.add(Dense(num_classes))  # Finalni potpuno povezan sloj
     model.add(Activation('softmax'))
 
