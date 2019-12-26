@@ -1,5 +1,5 @@
 import pickle
-from labels import get_labels
+from labels import get_flavia_labels, get_labels
 import os
 import numpy as np
 import cv2
@@ -9,11 +9,14 @@ from os import path
 from cnn import create_model
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
-labels = get_labels()
-if not path.exists("model.pkl"):
-    create_model()
+labels = get_flavia_labels()
 
-model = pickle.load(open('model.pkl', 'rb'))
+model_name = 'model.pkl'
+
+if not path.exists(model_name):
+    create_model(model_name)
+
+model = pickle.load(open(model_name, 'rb'))
 
 def print_predictions(folder):
     all_images = os.listdir(folder)
@@ -32,7 +35,7 @@ def print_predictions(folder):
     vec = model.predict_classes(all_processed_images)
 
     for image_name, idx in zip(all_images, vec):
-        print(image_name, " is ", labels[idx][1])
+        print(image_name, " -> ", labels[idx][1])
 
 
 print_predictions('to_predict')

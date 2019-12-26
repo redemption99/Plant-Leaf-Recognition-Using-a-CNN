@@ -7,17 +7,18 @@ from keras.layers import Dense, Dropout, Activation, Flatten
 from keras.layers import Conv2D, MaxPooling2D
 import pickle
 from preprocessing import process_dataset
-from labels import get_labels
+from labels import get_flavia_labels, get_labels
 
-labels = get_labels()
+labels = get_flavia_labels()
 num_classes = len(labels)
 
 #load data
 def get_data():
 
-    processed_folder = 'processed5'
+    processed_folder = 'processed_flavia'
     if not os.path.exists(processed_folder):
-        process_dataset('dataset', processed_folder)
+        print("obrada dataseta")
+        process_dataset('dataset_flavia', processed_folder)
 
     all_images = os.listdir(processed_folder)
 
@@ -35,23 +36,39 @@ def get_data():
 
         imageid = int(image_name.split('.')[0])
         for j in labels:
-            if imageid >= j[2] and imageid <= j[3]:
+            if j[2] <= imageid <= j[3]:
                 Y[-1][0] = 0
-                Y[-1][j[0]]=1
+                Y[-1][j[0]] = 1
                 break
+        ''' 
+        splitted_name = image_name.split('_')
+        label_name = splitted_name[0]
+
+        if len(Y) > 1 and label_name == labels[np.argmax(Y[-2][1])]:
+            Y[-1] = Y[-2]
+        else:
+            for j in labels:
+                if label_name == j[1]:
+                    Y[-1][0] = 0
+                    Y[-1][j[0]] = 1
+        '''
 
     return np.asarray(X), np.asarray(Y)
 
-def create_model():
+def create_model(model_name):
+
+    print("ucitavanje dataseta")
 
     #ucitavanje podataka
     [X, Y] = get_data()
+
+    print("zavrseno ucitavanje")
 
     batch_size = 32
     epochs = 50
 
     #80% dataseta koristimo za treniranje, 20% za testiranje
-    X_train, X_test, Y_train, Y_test = train_test_split(X,Y, test_size=0.2)
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, shuffle=True)
 
     #kreiranje modela
     model = Sequential()
@@ -73,6 +90,7 @@ def create_model():
     model.add(Flatten())
     model.add(Dense(2048))  # Prvi potpuno povezan sloj
     model.add(Activation('relu'))
+    #model.add(Dropout(0.5))
     model.add(Dense(512))  # Drugi potpuno povezan sloj
     model.add(Activation('relu'))
     model.add(Dense(num_classes))  # Finalni potpuno povezan sloj
@@ -92,4 +110,4 @@ def create_model():
     print('Test loss:', scores[0])
     print('Test accuracy:', scores[1])
 
-    pickle.dump(model, open('model.pkl', 'wb'))
+    pickle.dump(model, open(model_name, 'wb'))
