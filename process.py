@@ -33,9 +33,3 @@ def process_image(image_data):
 
     # vracamo obradjenu sliku
     return edges_image
-
-
-in_folder = 'dataset_flavia'
-image_name = '1423.jpg'
-image_data = cv2.imread(in_folder + '/' + image_name, 0)
-np.savetxt("1423.txt", process_image(image_data))
