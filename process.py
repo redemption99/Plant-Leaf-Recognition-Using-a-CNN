@@ -12,7 +12,7 @@ def process_image(image_data):
     center_x = (max(width, height) - width) // 2
     center_y = (max(width, height) - height) // 2
 
-    # writing the initial image inside center part of padded iamge
+    # writing the initial image inside the middle part of padded image
     padded_image[center_x: center_x + width, center_y: center_y + height] = image_data / 255
 
     # resizing image to 229x229 pixels
