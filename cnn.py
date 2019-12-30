@@ -57,20 +57,19 @@ def get_data():
 
 def create_model(model_name):
 
-    print("ucitavanje dataseta")
-
-    #ucitavanje podataka
+    print("load dataset")
+    
     [X, Y] = get_data()
 
-    print("zavrseno ucitavanje")
+    print("datased loaded")
 
     batch_size = 32
     epochs = 50
 
-    #80% dataseta koristimo za treniranje, 20% za testiranje
+    #80% dataset for train, 20% for test
     X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, shuffle=True)
 
-    #kreiranje modela
+    #creating model
     model = Sequential()
     model.add(Conv2D(32, (3, 3), strides=2, padding='valid', input_shape=X_train.shape[1:]))
     model.add(Activation('relu'))
@@ -88,22 +87,22 @@ def create_model(model_name):
     model.add(MaxPooling2D(pool_size=(8, 8), strides=1))
 
     model.add(Flatten())
-    model.add(Dense(2048))  # Prvi potpuno povezan sloj
+    model.add(Dense(2048))  # First fully connected layer
     model.add(Activation('relu'))
     #model.add(Dropout(0.5))
-    model.add(Dense(512))  # Drugi potpuno povezan sloj
+    model.add(Dense(512))  # Second fully connected layer
     model.add(Activation('relu'))
-    model.add(Dense(num_classes))  # Finalni potpuno povezan sloj
+    model.add(Dense(num_classes))  # Final fully connected layer
     model.add(Activation('softmax'))
 
     opt = keras.optimizers.rmsprop(lr=0.0001, decay=1e-6)
 
-    # Kompilacija modela
+    # Compilation
     model.compile(loss='categorical_crossentropy', optimizer=opt, metrics=['accuracy'])
 
     os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
-    #treniranje modela
+    # Training
     model.fit(X_train, Y_train, batch_size=batch_size, epochs=epochs, validation_data=(X_test, Y_test), shuffle=True)
 
     scores = model.evaluate(X_test, Y_test, verbose=1)
